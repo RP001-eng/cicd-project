@@ -30,5 +30,9 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/cicd-app
-          docker ps -q --filter "publish=3000" | xargs -r docker rm -f
+
+          #  Remove ALL containers (safe for this project)
+          docker rm -f $(docker ps -aq) || true
+
+          # Run fresh container
           docker run -d -p 3000:3000 --name cicd-container ${{ secrets.DOCKER_USERNAME }}/cicd-app
